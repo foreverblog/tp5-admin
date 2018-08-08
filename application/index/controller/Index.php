@@ -1,6 +1,8 @@
 <?php
 namespace app\index\controller;
 
+use think\db;
+
 class Index
 {
     public function index()
@@ -11,5 +13,11 @@ class Index
     public function hello($name = 'ThinkPHP5')
     {
         return 'hello,' . $name;
+    }
+
+    public function test()
+    {
+        $data = db::name('admin')->where('id',1)->find();
+        var_dump($data);
     }
 }
