@@ -4,3 +4,5 @@
 *.log
 thinkphp
 .env
+composer.lock
+runtime
