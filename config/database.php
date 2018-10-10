@@ -19,7 +19,7 @@ return [
     // 用户名
     'username'        => \Env::get('database.username'),
     // 密码
-    'password'        =>  \Env::get('database.password'),
+    'password'        => \Env::get('database.password'),
     // 端口
     'hostport'        => '',
     // 连接dsn
