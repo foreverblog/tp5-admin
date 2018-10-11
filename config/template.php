@@ -34,6 +34,6 @@ return [
     'taglib_end'   => '}',
     // 模板输出替换
     'tpl_replace_string'  =>  [
-        '__ADMIN__'=>'/static/admin',
+        '__ADMIN__'=>'/static/layuiadmin',
     ]
 ];
