@@ -11,6 +11,11 @@ class Index extends Base
 {
     public function index()
     {
-        return 'index';
+        return $this->fetch();
+    }
+
+    public function home()
+    {
+        return $this->fetch();
     }
 }
