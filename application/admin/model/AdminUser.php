@@ -44,7 +44,7 @@ class AdminUser extends Base
         $user->last_ip = $user['now_ip'];
         $user->last_time = $user['now_time'];
         $user->save();
-        session('user', $user);
+        session('user', json_decode($user, true));
         session('user_id', $user['id']);
         return $user;
     }
