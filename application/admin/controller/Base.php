@@ -16,7 +16,7 @@ class Base extends Controller
         // 判断用户是否登录
         $uid = session('user_id');
         if (!isset($uid)) {
-            return $this->error('对不起,您还没有登录!请先登录', '/admin/User/login');
+            return $this->error('对不起，您还没有登录！请先登录', '/admin/user/login');
         }
     }
 }
