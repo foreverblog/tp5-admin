@@ -32,8 +32,20 @@ class AdminUser extends Base
         return time();
     }
 
+    // 登陆验证
     public function login($data)
     {
-
+        $user = AdminUser::where('user_name', $data['userName'])->find();
+        if (empty($user)) {
+            return false;
+        } elseif ($user['password'] != $data['password']) {
+            return false;
+        }
+        $user->last_ip = $user['now_ip'];
+        $user->last_time = $user['now_time'];
+        $user->save();
+        session('user', $user);
+        session('user_id', $user['id']);
+        return $user;
     }
 }
