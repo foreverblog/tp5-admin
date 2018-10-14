@@ -50,6 +50,24 @@ class User extends Controller
         if (request()->isGet()) {
             return $this->fetch();
         }
+        $userName = $request->param('username');
+        $password = $request->param('password');
+        $verCode = $request->param('vercode');
+        $email = $request->param('email');
+
+        if(!captcha_check($verCode)){
+            // 验证失败
+            return ['code' => 1, 'msg' => '验证码错误'];
+        }
+
+        $data = [
+            'userName' => $userName,
+            'password' => md5(md5($password)),
+            'email' => $email
+        ];
+        $adminUser = app()->model('AdminUser');
+        $data = $adminUser->registerByEmail($data);
+
     }
 
     // 后台管理员退出
@@ -58,7 +76,16 @@ class User extends Controller
         session('user_id', null);
     }
 
-    protected function setToken(){
-        return  $this->request->token('__token__', 'sha1');
+    protected function setToken()
+    {
+        return call_user_func('sha1', $this->server('REQUEST_TIME_FLOAT'));
+    }
+
+    protected function sendRegisterEmail($to,$title,$content)
+    {
+        $data = sendMail($to, $title, $content);
+        if ($data != false) {
+            return  '发送成功';
+        }
     }
 }
