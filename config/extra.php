@@ -13,4 +13,6 @@ return [
     'smtp_password'                 => '',//SMTP服务器登陆密码
     'smtp_secure'                   => 'ssl', //tls 端口25 ssl465
     'smtp_port'                     => '465', //tls 端口25 ssl465
+    // 网站域名
+    'web_domain'                     => 'http://join.foreverblog.cn',
 ];
