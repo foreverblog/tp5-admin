@@ -18,7 +18,7 @@ class User extends Controller
         if (request()->isGet()) {
             // 判断用户是否登录
             $uid = session('user_id');
-            if (isset($uid)) {
+            if (!empty($uid)) {
                 return $this->error('您已经登录，请进行操作即可', '/admin');
             }
             return $this->fetch();
@@ -38,13 +38,21 @@ class User extends Controller
         ];
         $adminUser = app()->model('AdminUser');
         $data = $adminUser->login($data);
-        if ($data != false) {
+
+        if ($data == false) {
+            return ['code' => 1, 'msg' => '账号或密码错误'];
+        } elseif ($data == 1){
+            return ['code' => 1, 'msg' => '账号待激活，请查看邮箱邮件'];
+        } else {
             return ['code' => 0, 'msg' => '登入成功', 'data' => ['access_token' => $this->setToken()]];
         }
-        return ['code' => 1, 'msg' => '账号或密码错误'];
     }
 
-    // 后台管理员注册
+    /**
+     * 后台管理员注册
+     * @param Request $request
+     * @return array|mixed
+     */
     public function register(Request $request)
     {
         if (request()->isGet()) {
@@ -66,8 +74,18 @@ class User extends Controller
             'email' => $email
         ];
         $adminUser = app()->model('AdminUser');
-        $data = $adminUser->registerByEmail($data);
+        return $adminUser->registerByEmail($data);
 
+    }
+
+    public function activation($userId, $activeCode)
+    {
+        $adminUser = app()->model('AdminUser');
+        $data = $adminUser->activation($userId, $activeCode);
+        if ($data == false) {
+            return $this->error('验证失败，激活失败', '/admin/User/register');
+        }
+        return $this->success('验证成功，激活成功', '/admin');
     }
 
     // 后台管理员退出
@@ -81,11 +99,4 @@ class User extends Controller
         return call_user_func('sha1', $this->server('REQUEST_TIME_FLOAT'));
     }
 
-    protected function sendRegisterEmail($to,$title,$content)
-    {
-        $data = sendMail($to, $title, $content);
-        if ($data != false) {
-            return  '发送成功';
-        }
-    }
 }
