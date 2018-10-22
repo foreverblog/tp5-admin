@@ -83,7 +83,10 @@ class User extends Controller
         $adminUser = app()->model('AdminUser');
         $data = $adminUser->activation($userId, $activeCode);
         if ($data == false) {
-            return $this->error('验证失败，激活失败', '/admin/User/register');
+            return $this->error('验证失败，激活失败', '/admin/user/register');
+        }
+        if ($data == 1) {
+            return $this->error('已经激活成功，无需重复激活', '/admin/user/login');
         }
         return $this->success('验证成功，激活成功', '/admin');
     }
