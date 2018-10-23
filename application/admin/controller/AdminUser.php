@@ -15,4 +15,13 @@ class AdminUser extends Base
     {
         return $this->fetch();
     }
+    
+    public function userList()
+    {
+        $page = $this->request->param('page');
+        $limit = $this->request->param('limit');
+        $adminUser = app()->model('AdminUser');
+        $data = $adminUser->getUserList($page, $limit);
+        return $data;
+    }
 }
