@@ -42,7 +42,7 @@ class User extends Controller
         if ($data == false) {
             return ['code' => 1, 'msg' => '账号或密码错误'];
         } elseif ($data == 1){
-            return ['code' => 1, 'msg' => '账号待激活，请查看邮箱邮件'];
+            return ['code' => 1, 'msg' => '账号待激活或已被禁止登入'];
         } else {
             return ['code' => 0, 'msg' => '登入成功', 'data' => ['access_token' => $this->setToken()]];
         }
