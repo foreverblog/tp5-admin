@@ -9,6 +9,7 @@ namespace app\admin\controller;
 
 use think\Controller;
 use think\Request;
+use mcrypt\Mcrypt;
 
 class User extends Controller
 {
@@ -37,15 +38,17 @@ class User extends Controller
             'password' => md5(md5($password))
         ];
         $adminUser = app()->model('AdminUser');
-        $data = $adminUser->login($data);
+        $res = $adminUser->login($data);
 
-        if ($data == false) {
+        if ($res == false) {
             return ['code' => 1, 'msg' => '账号或密码错误'];
-        } elseif ($data == 1){
-            return ['code' => 1, 'msg' => '账号待激活或已被禁止登入'];
-        } else {
-            return ['code' => 0, 'msg' => '登入成功', 'data' => ['access_token' => $this->setToken()]];
         }
+
+        if ($res === 1){
+            return ['code' => 1, 'msg' => '账号待激活或已被禁止登入'];
+        }
+
+        return ['code' => 0, 'msg' => '登入成功', 'data' => ['access_token' => $this->setToken($userName)]];
     }
 
     /**
@@ -88,18 +91,19 @@ class User extends Controller
         if ($data == 1) {
             return $this->error('已经激活成功，无需重复激活', '/admin/user/login');
         }
-        return $this->success('验证成功，激活成功', '/admin');
+        return $this->success('验证成功，激活成功', '/admin/user/login');
     }
 
     // 后台管理员退出
     public function logout()
     {
         session('user_id', null);
+        session('user', null);
     }
 
-    protected function setToken()
+    protected function setToken($userName)
     {
-        return call_user_func('sha1', $this->server('REQUEST_TIME_FLOAT'));
+        return Mcrypt::encode($userName);
     }
 
 }
