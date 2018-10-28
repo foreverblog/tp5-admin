@@ -13,25 +13,11 @@ class AdminUser extends Base
 {
     // 5.1中模型不会自动获取主键名称，必须设置pk属性
     protected $pk = 'id';
-    
+
     // 自动完成
     protected $update = ['now_ip', 'login_num', 'now_time'];
-    
     protected $insert = ['login_num' => 0,'status' => 1, 'level_id' => 3, 'nick_name' => '请修改昵称'];
-    
-    protected function setLoginNumAttr($value)
-    {
-        return $value + 1;
-    }
-    protected function setNowIpAttr()
-    {
-        return request()->ip();
-    }
-    protected function setNowTimeAttr()
-    {
-        return time();
-    }
-    
+
     // 登陆验证
     public function login($data)
     {
@@ -77,7 +63,7 @@ class AdminUser extends Base
         sendMail($email, '十年之约用户激活邮件', "欢迎注册十年之约。<br/>请点击下面的链接进行激活：<a target='_blank' href=" . $link . ">" . $link . "</a>");
         return ['code' => 0, 'msg' => '激活邮件已发送，请查看邮箱', 'data' => $user];
     }
-    
+
     // 激活验证
     public function activation($userId, $activeCode)
     {
@@ -96,10 +82,32 @@ class AdminUser extends Base
         }
         $user->status = 0;
         $status = $user->save();
-        session('user', json_decode($user, true));
-        session('user_id', $user['id']);
         if (!empty($status)) {
             return true;
         }
+    }
+
+    public function getUserList($page, $limit)
+    {
+        $count = AdminUser::count();
+        $user = AdminUser::page($page,$limit)->select();
+        if (empty($count) && empty($user)) {
+            return ['code' => 1, 'msg' => '暂无数据'];
+        }
+        return ['code' => 0, 'count' => $count, 'data' => $user, 'msg' => '查询成功'];
+    }
+
+
+    protected function setLoginNumAttr($value)
+    {
+        return $value + 1;
+    }
+    protected function setNowIpAttr()
+    {
+        return request()->ip();
+    }
+    protected function setNowTimeAttr()
+    {
+        return time();
     }
 }
